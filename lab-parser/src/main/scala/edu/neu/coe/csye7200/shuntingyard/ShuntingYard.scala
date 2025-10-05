@@ -56,9 +56,17 @@ case class ShuntingYard(valueStack: Stack[Int], operatorStack: Stack[Operator], 
     // we pop the top operator and the two top values from their respective stacks,
     // apply the operator and push the resulting value onto the value stack.
     //      ???
-
-    // TO BE IMPLEMENTED 
-        ???
+    // TO BE IMPLEMENTED
+    val (z, oo) = operatorStack.pop
+    val (p, xo) = valueStack.pop
+    val (q, yo) = p.pop
+    val maybeResult = for (o <- oo; x <- xo; y <- yo) yield o.operate(x, y)
+    maybeResult match {
+      case Some(w) =>
+        ShuntingYard(q.push(w), z, d)
+      case None =>
+        throw ShuntingYardException("logic error")
+    }
   }
 
   override def toString(): String = s"ShuntingYard($valueStack,$operatorStack,$depth)"
