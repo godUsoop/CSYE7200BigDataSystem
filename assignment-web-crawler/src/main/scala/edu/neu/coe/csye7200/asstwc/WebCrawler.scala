@@ -127,7 +127,10 @@ object WebCrawler {
     // You will also need FP.asFuture
     // 9 points.
     // TO BE IMPLEMENTED 
-    ???
+    for {
+      content <- fetchURLContent(url)
+      links   <- asFuture(getLinks(content, url))
+    } yield links
   // END SOLUTION
 
   /**
@@ -159,7 +162,14 @@ object WebCrawler {
    */
   def getURLs(node: Node, url: URL): Seq[Try[URL]] =
 // TO BE IMPLEMENTED 
-    ???
+    for {
+      anchor <- node \\ "a"
+      hrefNode = anchor \ "@href"
+      href <- hrefNode.map(_.text).filter(isValidURLString)
+    } yield {
+      val rel = createRelURL(Some(url), href)
+      rel.flatMap(validateURL).filter(isParseableURL)
+    }
 // END SOLUTION
 
   /**
